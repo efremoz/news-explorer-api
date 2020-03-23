@@ -11,17 +11,18 @@
         "type": "git",
         "url": "git+https://github.com/efremoz/news-explorer-api.git"
     },
-    "keywords": [
-        "express",
-        "nodejs",
-        "mongodb"
-    ],
     "author": "Denis Efremov",
     "license": "ISC",
     "bugs": {
         "url": "https://github.com/efremoz/news-explorer-api/issues"
     },
     "homepage": "https://github.com/efremoz/news-explorer-api#readme",
+    "devDependencies": {
+        "eslint": "^6.8.0",
+        "eslint-config-airbnb-base": "14.0.0",
+        "eslint-plugin-import": "2.18.2",
+        "nodemon": "^2.0.2"
+    },
     "dependencies": {
         "bcryptjs": "^2.4.3",
         "body-parser": "^1.19.0",
@@ -32,18 +33,10 @@
         "express-winston": "^4.0.3",
         "joi-objectid": "^3.0.1",
         "jsonwebtoken": "^8.5.1",
+        "mongod": "^2.0.0",
+        "mongodb": "^3.4.1",
         "mongoose": "^5.9.3",
-        "mongoose-unique-validator": "^2.0.3",
-        "mongoose-validator": "^2.1.0",
+        "validator": "12.2.0",
         "winston": "^3.2.1"
-    },
-    "devDependencies": {
-        "eslint": "^6.1.0",
-        "eslint-config-airbnb": "^18.0.1",
-        "eslint-plugin-import": "^2.18.2",
-        "eslint-plugin-jsx-a11y": "^6.2.3",
-        "eslint-plugin-react": "^7.14.3",
-        "eslint-plugin-react-hooks": "^1.7.0",
-        "nodemon": "^2.0.2"
     }
 }

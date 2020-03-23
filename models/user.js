@@ -1,60 +1,50 @@
 const mongoose = require('mongoose');
-const validate = require('mongoose-validator');
-const uniqueValidator = require('mongoose-unique-validator');
+const validator = require('validator');
 const bcrypt = require('bcryptjs');
 
 const { LOGIN_ERROR, FIELD_EMAIL_ERROR } = require('../constants/constants');
-const UnauthorizedError = require('../errors/UnauthorizedError');
-
-const emailValidator = [
-  validate({
-    validator: 'isEmail',
-    message: FIELD_EMAIL_ERROR,
-  }),
-];
 
 const userSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    unique: true,
-    required: true,
-    uniqueCaseInsensitive: true,
-    validate: emailValidator,
-  },
   password: {
     type: String,
-    required: true,
-    minlength: 8,
     select: false,
+    required: true,
+    minlength: 10,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
   },
   name: {
     type: String,
-    required: true,
     minlength: 2,
     maxlength: 30,
+    required: true,
   },
 });
 
-userSchema.plugin(uniqueValidator);
-
-userSchema.statics.findUserByCredentials = (email, password) => this.findOne({ email })
-  .select('+password')
-  .then((user) => {
-    if (!user) {
-      return Promise.reject(
-        new UnauthorizedError(LOGIN_ERROR),
-      );
-    }
-
-    return bcrypt.compare(password, user.password).then((matched) => {
-      if (!matched) {
-        return Promise.reject(
-          new UnauthorizedError(LOGIN_ERROR),
-        );
+userSchema.path('email').validate(validator.isEmail, FIELD_EMAIL_ERROR);
+userSchema.statics.findUserByCredentials = function check(email, password) {
+  return this.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        return Promise.reject(new Error(LOGIN_ERROR));
       }
-
-      return user;
+      return bcrypt.compare(password, user.password)
+        .then((matched) => {
+          if (!matched) {
+            return Promise.reject(new Error(LOGIN_ERROR));
+          }
+          return user;
+        });
     });
-  });
+};
+
+userSchema.methods.omitPrivate = function omitPrivate() {
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
+};
 
 module.exports = mongoose.model('user', userSchema);
