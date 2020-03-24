@@ -11,12 +11,13 @@ const { JWT_SECRET } = require('../constants/config');
 
 const createUser = (req, res, next) => {
   const { name, email, password } = req.body;
-
-  bcrypt.hash(password, 10)
-    .then((hash) => User.create({
-      name, email, password: hash,
-    }))
-    .then((user) => res.status(201).send({ data: user.omitPrivate() }))
+  bcrypt
+    .hash(password, 10)
+    .then((hash) => User.create({ name, email, password: hash }))
+    .then((user) => {
+      const { password: pass, ...newUser } = user._doc;
+      res.status(201).send(newUser);
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequest(err.message));

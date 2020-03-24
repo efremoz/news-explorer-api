@@ -4,7 +4,6 @@ const NotFoundError = require('../errors/NotFoundError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 
 const {
-  NOT_FOUND_ERROR,
   NOT_FOUND_ARTICLE_ERROR,
   NOT_FOUND_ARTICLES_ERROR,
   FORBIDEN_ARTICLE_ERROR,
@@ -39,30 +38,23 @@ const createArticle = (req, res, next) => {
 
 
 const deleteArticle = (req, res, next) => {
-  const ownerId = req.user._id;
   const { articleId } = req.params;
 
-  if (!articleId) {
-    throw new NotFoundError(NOT_FOUND_ERROR);
-  }
-
-  Article.findById(articleId)
+  Article.findOne({ _id: articleId })
+    .select('+owner')
+    .orFail(() => {
+      throw new NotFoundError(NOT_FOUND_ARTICLE_ERROR);
+    })
     .then((articleInfo) => {
-      if (articleInfo) {
-        if (articleInfo.owner.toString() === ownerId) {
-          Article.findByIdAndRemove(articleId)
-            .then((articleRemove) => res.send({ dataRemove: articleRemove }))
-            .catch(next);
-        } else {
-          throw new UnauthorizedError(FORBIDEN_ARTICLE_ERROR);
-        }
-      } else {
-        throw new NotFoundError(NOT_FOUND_ARTICLE_ERROR);
+      if (!articleInfo.owner.equals(req.user._id)) {
+        throw new UnauthorizedError(FORBIDEN_ARTICLE_ERROR);
       }
+      Article.findByIdAndRemove(articleId)
+        .then((articleRemove) => res.send({ dataRemove: articleRemove }))
+        .catch(next);
     })
     .catch(next);
 };
-
 
 module.exports = {
   getArticles,

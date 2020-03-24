@@ -13,7 +13,9 @@ const NotFoundError = require('../errors/NotFoundError');
 router.post('/signin', loginCheck, login);
 router.post('/signup', signupCheck, createUser);
 
+// мидлвеар который контролирует область доступа для юзера
 router.use(auth);
+
 router.use('/users', users);
 router.use('/articles', cards);
 router.use((req, res, next) => next(new NotFoundError(NOT_FOUND_ERROR)));
