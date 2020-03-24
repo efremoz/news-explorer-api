@@ -28,7 +28,7 @@ const createArticle = (req, res, next) => {
   Article.create({
     keyword, title, text, date, source, link, image, owner,
   })
-    .then((article) => res.status(201).send({ data: article }))
+    .then((article) => res.status(201).send({ dataAdd: article }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(new BadRequest(err.message));
@@ -51,7 +51,7 @@ const deleteArticle = (req, res, next) => {
       if (articleInfo) {
         if (articleInfo.owner.toString() === ownerId) {
           Article.findByIdAndRemove(articleId)
-            .then((articleRemove) => res.send({ data: articleRemove }))
+            .then((articleRemove) => res.send({ dataRemove: articleRemove }))
             .catch(next);
         } else {
           throw new UnauthorizedError(FORBIDEN_ARTICLE_ERROR);
