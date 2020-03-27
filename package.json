@@ -1,0 +1,42 @@
+{
+    "name": "news-explorer-api",
+    "version": "1.0.2",
+    "description": "backend-for-diploma-project-praktikum.yandex",
+    "main": "app.js",
+    "scripts": {
+        "start": "node app.js",
+        "dev": "nodemon app.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/efremoz/news-explorer-api.git"
+    },
+    "author": "Denis Efremov",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/efremoz/news-explorer-api/issues"
+    },
+    "homepage": "https://github.com/efremoz/news-explorer-api#readme",
+    "devDependencies": {
+        "eslint": "^6.8.0",
+        "eslint-config-airbnb-base": "14.0.0",
+        "eslint-plugin-import": "2.18.2",
+        "nodemon": "^2.0.2"
+    },
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "body-parser": "^1.19.0",
+        "celebrate": "^12.0.0",
+        "cookie-parser": "^1.4.4",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "express-rate-limit": "^5.1.1",
+        "express-winston": "^4.0.3",
+        "helmet": "^3.21.3",
+        "joi-objectid": "^3.0.1",
+        "jsonwebtoken": "^8.5.1",
+        "mongoose": "^5.9.3",
+        "validator": "12.2.0",
+        "winston": "^3.2.1"
+    }
+}
