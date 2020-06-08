@@ -4,7 +4,14 @@ const { UNAUTHORIZED } = require('../constants/constants');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 
 module.exports = (req, res, next) => {
-  const token = req.cookies.jwt;
+
+  const { authorization } = req.headers;
+
+  if (!authorization || !authorization.startsWith('Bearer ')) {
+    throw new UnauthorizedError(UNAUTHORIZED);
+  }
+
+  const token = authorization.replace('Bearer ', '');
 
   if (!token) {
     throw new UnauthorizedError(UNAUTHORIZED);

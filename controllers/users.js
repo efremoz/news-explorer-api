@@ -6,7 +6,7 @@ const BadRequest = require('../errors/BadRequest');
 const NotFoundError = require('../errors/NotFoundError');
 const UnathorizedError = require('../errors/UnauthorizedError');
 
-const { NOT_FOUND_USER_ERROR, AUTH_TEXT, LOGIN_ERROR } = require('../constants/constants');
+const { NOT_FOUND_USER_ERROR, LOGIN_ERROR } = require('../constants/constants');
 const { JWT_SECRET } = require('../constants/config');
 
 const createUser = (req, res, next) => {
@@ -31,14 +31,7 @@ const login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
-      res
-        .cookie('jwt', token, {
-          maxAge: 3600000 * 24 * 7,
-          httpOnly: true,
-          sameSite: true,
-        })
-        .send({ message: AUTH_TEXT })
-        .end();
+      res.send({ token });
     })
     .catch((err) => {
       if (err.message !== LOGIN_ERROR) {
@@ -48,16 +41,26 @@ const login = (req, res, next) => {
     });
 };
 
-const getUser = (req, res, next) => User
-  .findOne({ _id: req.user._id })
-  .then((userId) => {
-    if (!userId) {
-      throw new NotFoundError(NOT_FOUND_USER_ERROR);
-    }
+// const getUser = (req, res, next) => User
+//   .findOne({ _id: req.user._id })
+//   .then((userId) => {
+//     if (!userId) {
+//       throw new NotFoundError(NOT_FOUND_USER_ERROR);
+//     }
 
-    res.send(userId);
-  })
-  .catch(next);
+//     res.send(userId);
+//   })
+//   .catch(next);
+
+const getUser = (req, res, next) => {
+  User.findById(req.user._id)
+    .orFail(() => {
+      throw new NotFoundError(NOT_FOUND_USER_ERROR);
+    })
+    .then((user) => res.status(200).send({ data: user }))
+    .catch(next);
+};
+
 
 
 module.exports = {

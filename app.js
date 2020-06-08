@@ -1,4 +1,5 @@
 const express = require('express'); // nodejs фреймворк
+const cors = require('cors');
 const mongoose = require('mongoose');// сопоставитель документов в базе данных и объектов JavaScript
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -29,6 +30,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(limiter);
 app.use(requestLogger);
+
+app.use(cors());
 
 app.use(router);
 
